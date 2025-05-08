@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emotion Detector</title>
+  <style>
+    body { font-family: Arial; padding: 2rem; background: #f7f7f7; }
+    textarea, button { width: 100%; padding: 1rem; margin: 1rem 0; }
+    #result { margin-top: 1rem; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Emotion Detection</h1>
+  <textarea id="textInput" rows="4" placeholder="Enter your text here..."></textarea>
+  <button onclick="sendRequest()">Detect Emotion</button>
+  <div id="result"></div>
+
+  <script>
+    async function sendRequest() {
+      const text = document.getElementById("textInput").value;
+      const resultDiv = document.getElementById("result");
+
+      if (!text.trim()) {
+        resultDiv.textContent = "Please enter some text.";
+        return;
+      }
+
+      resultDiv.textContent = "Analyzing...";
+
+      try {
+        const response = await fetch("https://sentiment-14pe.onrender.com/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) throw new Error("Server error");
+
+        const data = await response.json();
+        resultDiv.innerHTML = `<strong>Emotion:</strong> ${data.emotion}<br><strong>Confidence:</strong> ${data.confidence}`;
+      } catch (error) {
+        resultDiv.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
+
+
+
+</body>
+</html>
